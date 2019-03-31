@@ -28,12 +28,13 @@ include_once __DIR__ . '/../config.php';
 include_once __DIR__ . '/../tools.php';
 include_once __DIR__ . '/../domain.php';
 
-$SQL = "SELECT * FROM `Ninja` ORDER BY id ASC";
+$SQL = "SELECT * FROM `Team` ORDER BY id ASC";
+$SQL_POSITIONS = "SELECT * FROM `Team_Ninja` WHERE `team_id`=?";
 
 $db = openConnection();
 $stmt = $db->prepare($SQL);
 
-$ninjas = array();
+$teams = array();
 $stmt->execute();
 $result = $stmt->get_result();
 if ($result->num_rows === 0) {
@@ -42,14 +43,28 @@ if ($result->num_rows === 0) {
 while ($row = $result->fetch_assoc()) {
     $id = $row['id'];
     $name = $row['name'];
-    $image = $row['image'];
-    $element = $row['element'];
-    $ninja = new Ninja($name, $image, $id, $element);
-    $ninjas[] = $ninja;
+    $description = $row['description'];
+    $team = new Team($name, $description, $id);
+    $teams[] = $team;
+}
+$stmt->close();
+for ($i = 0; $i < sizeof($teams); $i++) {
+    $teamStat = $db->prepare($SQL_POSITIONS);
+    if (!$teamStat) {
+        echo "TeamStat " . $teamStat;
+        echo "Error: " . mysqli_error($db);
+    }
+    $team = $teams[$i];
+    $teamStat->bind_param("i", $team->id);
+    $teamStat->execute();
+    $teamResult = $teamStat->get_result();
+    while ($teamRow = $teamResult->fetch_assoc()) {
+        $pos = $teamRow['position'];
+        $nin = $teamRow['ninja_id'];
+        $team->positions[$pos] = $nin;
+    }
 }
 
-foreach ($ninjas as $nin) {
-    $json = json_encode($nin);
-    echo $json;
-    echo "<br>";
-}
+
+
+echo json_encode($teams);

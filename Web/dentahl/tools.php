@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * The MIT License
  *
  * Copyright 2019 Clayn <clayn_osmato@gmx.de>.
@@ -24,10 +24,26 @@
  * THE SOFTWARE.
  */
 
-function openConnection($charset="utf8mb4") {
-    include_once __DIR__.'/config.php';
+function openConnection($charset = "utf8mb4") {
+    include_once __DIR__ . '/config.php';
     $config = getDBConfiguration();
-    $mysqli= new mysqli($config->url, $config->user, $config->password, $config->database);
+    $mysqli = new mysqli($config->url, $config->user, $config->password, $config->database);
     \mysqli_set_charset($mysqli, $charset);
     return $mysqli;
+}
+
+function map_to_ninja($result) {
+    $id = $result['id'];
+    $name = $result['name'];
+    $image = $result['image'];
+    $element = $result['element'];
+    $main = $result['main'];
+    return new Ninja($name, $image, $id, $element, $main);
+}
+
+function map_to_element($row) {
+    $id = $row['id'];
+    $name = $row['name'];
+    $image = $row['image'];
+    return new Element($name, $image, $id);
 }

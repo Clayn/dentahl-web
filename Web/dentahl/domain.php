@@ -72,6 +72,25 @@ class Element {
 
 }
 
+class Team {
+
+    var $name = "";
+    var $description = "";
+    var $id = -1;
+    var $positions;
+
+    public function __construct($name, $description, $id) {
+        $this->description = $description;
+        $this->name = $name;
+        $this->id = $id;
+        $this->positions = array();
+        for ($i = 0; $i < 9; $i++) {
+            $this->positions[$i] = -1;
+        }
+    }
+
+}
+
 class Ninja {
 
     var $name = "";

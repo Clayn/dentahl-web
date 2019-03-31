@@ -40,12 +40,8 @@ if ($result->num_rows === 0) {
     exit('No rows');
 }
 while ($row = $result->fetch_assoc()) {
-    $id = $row['id'];
-    $name = $row['name'];
-    $image = $row['image'];
-    $element = $row['element'];
-    $main = $row['main'];
-    $ninja = new Ninja($name, $image, $id, $element, $main);
+
+    $ninja = map_to_ninja($row);
     $ninjas[] = $ninja;
 }
 
